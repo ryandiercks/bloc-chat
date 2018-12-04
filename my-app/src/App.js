@@ -17,15 +17,13 @@ firebase.initializeApp(config);
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <div className="sidebar">
-          <header>
-            <h1>Bloc Chats</h1>
-          </header>
-          <RoomList
-            firebase={firebase}
-          />
-       </div>
+      <div className="row">
+      <div className="col-sm-3">
+            <RoomList firebase={firebase} />
+      </div>
+      <div className="col-sm-8">
+          Messages will go here???
+      </div>
       </div>
     );
   }
