@@ -1,61 +1,60 @@
 import React, { Component } from 'react';
 
 class RoomList extends Component {
-    constructor(props) {
-        super(props)
+	constructor(props) {
+		super(props);
+		this.state = {
+			rooms: [],
+			newRoomName: '',
+		};
+		this.roomsRef = this.props.firebase.database().ref('rooms');
+	}
 
-        this.state = {
-            rooms: [ ]
-        };
+	componentDidMount() {
+		this.roomsRef.on('child_added', snapshot => {
+			const room = snapshot.val();
+			room.key = snapshot.key;
+			this.setState({ rooms: this.state.rooms.concat( room ) })
+		});
+	}
 
-        this.roomsRef = this.props.firebase.database().ref('rooms');
-    }
+	handleChatNameEntry(e) {
+		this.setState({ newRoomName: e.target.value });
+	}
 
-    componentDidMount() {
-        this.roomsRef.on('child_added', snapshot => {
-            const room = snapshot.val();
-            room.key = snapshot.key;
-        this.setState({ rooms: this.state.rooms.concat( room ) });
-        });
-    }
+	verifyRoomName(name) {
+		if(name.length < 1) { console.log('No name entered'); return false; }
+		return true;
+	}
 
-    handleNewRoomInput(e) {
-       this.setState({ newRoom:e.target.value});
-   }
+	createRoom(e) {
+		e.preventDefault();
+		if (this.verifyRoomName(this.state.newRoomName)) {
+			this.roomsRef.push({
+				name: this.state.newRoomName
+			});
+			this.setState({ newRoomName: '' });
+		}
+	}
 
-   handleNewRoomAdd(e) {
-       const newRoom = this.state.newRoom;
-       const roomExists = this.state.rooms.find(rooms => rooms.name === newRoom);
-       if(newRoom && !roomExists) {
-           this.roomsRef.push({
-               name:newRoom
-           });
-       } else {
-           alert('Already exists!!!!')
-       };
-
-       this.setState({ newRoom:''});
-
-   }
-
-   render() {
-       return(
-       <div className="Room-list">
-           <h1 className="App-title">Bloc Chat</h1>
-           <div className="input-group mb-3">
-               <input type="text" className="form-control" placeholder="New room name" name="newRoom" value={this.state.newRoom} onChange={(e) => this.handleNewRoomInput(e)}/>
-               <div className="input-group-append">
-                   <button className="btn btn-outline-secondary" type="submit" onClick={(e) => this.handleNewRoomAdd(e)} >Add room</button>
-               </div>
-           </div>
-           <ul className="Rooms-nav">
-               { this.state.rooms.map( (room, index) =>
-                   <li className="Room-link" key={ index }><a href="#">{ room.name }</a></li>
-               )}
-           </ul>
-       </div>
-       )
-   }
+	render() {
+		return (
+			<section className="room-sidebar">
+				<h2>Chat Rooms</h2>
+				<ul className="room-list">
+					{this.state.rooms.map( (room) =>
+						<li className="room" key={room.key} onClick={() => this.props.handleSetActiveRoom(room.key,room.name)} className={ (room.key === this.props.activeRoomKey) ? 'active' : '' }>
+							{room.name}
+						</li>
+					)}
+				</ul>
+				<form className="create-chat" onSubmit={(e) => this.createRoom(e)}>
+					<input type="text" value={this.state.newRoomName} onChange={ (e) => this.handleChatNameEntry(e)} placeholder={'New Room Name'}></input>
+					<button type="submit" value="Submit">Create Room</button>
+				</form>
+			</section>
+		)
+	}
 }
 
-export default RoomList;
+export default RoomList
