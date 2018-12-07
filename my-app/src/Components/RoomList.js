@@ -9,6 +9,7 @@ class RoomList extends Component {
             newRoom:''
         };
 
+
         this.roomsRef = this.props.firebase.database().ref('rooms');
     }
 
