@@ -16,31 +16,32 @@ var config = {
 firebase.initializeApp(config);
 
 class App extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			activeRoomKey: '',
-			activeRoomName: '',
-		};
-	}
+  constructor(props) {
+    super(props)
 
-	handleSetActiveRoom = (roomKey,roomName) => {
-		this.setState({
-			activeRoomKey: roomKey,
-			activeRoomName: roomName,
-		});
-	}
+    this.state = {
+      activeRoom:[]
+    };
 
-	render() {
-		return (
-			<div className="App">
-				<RoomList firebase={firebase} activeRoomKey={this.state.activeRoomKey} handleSetActiveRoom={this.handleSetActiveRoom}>
-				</ RoomList>
-				<MessageList firebase={firebase} activeRoomKey={this.state.activeRoomKey} activeRoomName={this.state.activeRoomName}>
-				</MessageList>
-			</div>
-		);
-	}
+    this.setActiveRoom = this.setActiveRoom.bind(this);
+  }
+
+  setActiveRoom(room) {
+    this.setState({activeRoom:room});
+  }
+
+  render() {
+    return (
+      <div className="row">
+      <div className="col-sm-3">
+          <RoomList firebase={firebase} setactiveroom={this.setActiveRoom} activeroom={this.state.activeRoom} />
+      </div>
+      <div className="col-sm-9">
+          <MessageList firebase={firebase} activeroom={this.state.activeRoom} />
+      </div>
+      </div>
+    );
+  }
 }
 
 export default App;

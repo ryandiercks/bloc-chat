@@ -1,52 +1,55 @@
 import React, { Component } from 'react';
+import Moment from 'react-moment';
 
-class MessageList extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            messageList: [],
+    class MessageList extends Component {
+        constructor(props) {
+            super(props)
+
+            this.state = {
+                messages:[]
+            }
+
+            this.messagesRef = this.props.firebase.database().ref('messages');
         }
-        this.messagesRef = this.props.firebase.database().ref('messages');
-    }
 
-    loadMessages() {
-        const messageList = [];
-        this.messagesRef.on('child_added', snapshot => {
-            if (snapshot.val().roomId === this.props.activeRoomKey) {
+        componentDidMount() {
+            this.messagesRef.on('child_added', snapshot => {
                 const message = snapshot.val();
                 message.key = snapshot.key;
-                messageList.push( message );
-            }
-            this.setState({
-                messageList: messageList,
-            })
-        });
-    }
-
-    componentDidMount() {
-        this.loadMessages();
-    }
-
-    componentDidUpdate(prevProps) {
-        if (this.props.activeRoomKey !== prevProps.activeRoomKey) {
-            this.loadMessages();
+            this.setState({ messages: this.state.messages.concat( message ) });
+            });
         }
-    }
+
+        listMessages() {
+            if(this.props.activeroom.key) {
+                const msgs = this.state.messages.filter( (msgs, index) => msgs.roomID === this.props.activeroom.key);
+            if(msgs.length > 0) {
+                return (
+                <ul className="Messages-nav">
+                    { msgs.map( (message, index) =>
+                        <li key={ index } >
+                        <div className="rightside-left-chat">
+							<span id="message-author">{message.username}</span>
+                            <span id="message-time"><Moment unix format="lll">{message.sentAt}</Moment></span>
+							<p>{message.content}</p>
+						</div>
+                        </li>
+                    )}
+                </ul>)
+            }}
+        }
+
 
     render() {
-        return (
-            <section>
-                <h2>{this.props.activeRoomName}</h2>
-                {this.state.messageList.map( (message) =>
-                    <p className="message" key={message.key}>
-                        <span className="username">{message.username}</span>
-                        <span className="sent-at">({message.sentAt}): </span>
-                        {message.content}
-                    </p>
-                )}
-            </section>
+        return(
+            <div className="Message-list">
+                <h3 className="List-title">{this.props.activeroom.name}</h3>
+                {this.listMessages()}
+            </div>
         )
     }
+
 }
 
-export default MessageList
+
+export default MessageList;
