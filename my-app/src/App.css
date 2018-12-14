@@ -91,3 +91,11 @@ div.rightside-left-chat p {
 #message-author {
   font-weight: bold;
 }
+
+.List-title {
+  margin: 10px;
+}
+
+#display-name {
+  margin-left: 10px;
+}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Moment from 'react-moment';
+
 
     class MessageList extends Component {
         constructor(props) {
@@ -20,6 +20,11 @@ import Moment from 'react-moment';
             });
         }
 
+        formatDate(time)  {
+            var d = new Date(time);
+            return d.getHours()+ ":" + d.getMinutes()+ ":" + d.getSeconds();
+        }
+
         listMessages() {
             if(this.props.activeroom.key) {
                 const msgs = this.state.messages.filter( (msgs, index) => msgs.roomID === this.props.activeroom.key);
@@ -30,7 +35,7 @@ import Moment from 'react-moment';
                         <li key={ index } >
                         <div className="rightside-left-chat">
 							<span id="message-author">{message.username}</span>
-                            <span id="message-time"><Moment unix format="lll">{message.sentAt}</Moment></span>
+                            <span id="message-time">{this.formatDate(message.sentAt)}</span>
 							<p>{message.content}</p>
 						</div>
                         </li>
