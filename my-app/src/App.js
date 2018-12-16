@@ -15,7 +15,6 @@ var config = {
   messagingSenderId: "705907879629"
 };
 firebase.initializeApp(config);
-
 class App extends Component {
   constructor(props) {
     super(props)
@@ -32,12 +31,9 @@ class App extends Component {
   }
 
   setUser(user) {
-  if(user !== this.state.user) {
-    this.setState(this.initialState);
+    console.log("Setting user to " + (user ? user.displayName : user) + "...");
+    this.setState({user:user});
   }
-
-  this.setState({user:user});
-}
 
   render() {
     return (
