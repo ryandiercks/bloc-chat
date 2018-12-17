@@ -51,13 +51,15 @@ class App extends Component {
       <div className="row">
       <div className="navbar navbar-default navbar-fixed-top">
     <User firebase={firebase} setuser={this.setUser} user={this.state.user}/>
-</div>
+    </div>
+    <div className="Chat-container">
       <div className="col-sm-3">
           <RoomList firebase={firebase} setactiveroom={this.setActiveRoom} activeroom={this.state.activeRoom} />
       </div>
       <div className="col-sm-9">
           <MessageList firebase={firebase} activeroom={this.state.activeRoom} />
       </div>
+    </div>
       </div>
     );
   }
