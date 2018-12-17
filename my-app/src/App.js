@@ -21,20 +21,30 @@ class App extends Component {
     super(props)
 
     this.state = {
-      activeRoom:[]
+      activeRoom:[],
+      user:[]
     };
 
     this.setActiveRoom = this.setActiveRoom.bind(this);
+    this.setUser = this.setUser.bind(this);
   }
+
+  componentWillMount() {
+    this.initialState = this.state
+}
 
   setActiveRoom(room) {
     this.setState({activeRoom:room});
   }
 
   setUser(user) {
-    console.log("Setting user to " + (user ? user.displayName : user) + "...");
+    if(user != this.state.user) {
+      this.setState(this.initialState);
+    }
+
     this.setState({user:user});
   }
+
 
   render() {
     return (
