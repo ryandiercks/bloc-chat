@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-
+import Moment from 'react-moment';
 
     class MessageList extends Component {
         constructor(props) {
             super(props)
 
             this.state = {
-                messages:[]
+                messages:[],
+                newMessage:' '
             }
 
             this.messagesRef = this.props.firebase.database().ref('messages');
@@ -20,9 +21,21 @@ import React, { Component } from 'react';
             });
         }
 
-        formatDate(time)  {
-            var d = new Date(time);
-            return d.getHours()+ ":" + d.getMinutes()+ ":" + d.getSeconds();
+        handleNewMessageInput(e) {
+            this.setState({ newMessage: e.target.value});
+        }
+
+        handleNewMessageAdd(e) {
+            e.preventDefault(); // prevent default action
+            if(this.state.newMessage) {
+                this.messagesRef.push({
+                    content: this.state.newMessage,
+                    roomID: this.props.activeroom.key,
+                    sentAt: this.props.firebase.database.ServerValue.TIMESTAMP,
+                    username: (this.props.user ? this.props.user.displayName : "Guest")
+                });
+            };
+            this.setState({ newMessage: ' '});
         }
 
         listMessages() {
@@ -35,7 +48,7 @@ import React, { Component } from 'react';
                         <li key={ index } >
                         <div className="rightside-left-chat">
 							<span id="message-author">{message.username}</span>
-                            <span id="message-time">{this.formatDate(message.sentAt)}</span>
+                            <span id="message-time"><Moment format="lll">{message.sentAt}</Moment></span>
 							<p>{message.content}</p>
 						</div>
                         </li>
@@ -44,12 +57,29 @@ import React, { Component } from 'react';
             }}
         }
 
+        showAddMessage() {
+            if(this.props.activeroom.key) {
+                return(
+                    <form id="message-input">
+                        <div className="input-group mb-3">
+                            <input type="text" className="form-control" placeholder="New message" name="newMessage" onChange={(e) => this.handleNewMessageInput(e)} value={this.state.newMessage}/>
+                            <div className="input-group-append">
+                                <button className="btn btn-outline-secondary" type="submit" onClick={(e) => this.handleNewMessageAdd(e)} >Send</button>
+                            </div>
+                        </div>
+                    </form>
+                )
+            }
+        }
 
     render() {
         return(
-            <div className="Message-list">
+            <div className="wrap">
                 <h3 className="List-title">{this.props.activeroom.name}</h3>
+                <div id="list-messages">
                 {this.listMessages()}
+                </div>
+                {this.showAddMessage()}
             </div>
         )
     }

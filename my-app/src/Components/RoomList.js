@@ -25,6 +25,7 @@ class RoomList extends Component {
   }
 
   handleNewRoomAdd(e) {
+      e.preventDefault();
       const newRoom = this.state.newRoom;
       const roomExists = this.state.rooms.find(rooms => rooms.name === newRoom);
       if(newRoom && !roomExists) {
@@ -55,7 +56,7 @@ class RoomList extends Component {
           </form>
           <ul className="Rooms-nav">
               { this.state.rooms.map( (room, index) =>
-                  <li key={ index } onClick={() => this.props.setactiveroom(room)} ><a className={this.isCurrentRoom(room) ? "Room-link-active" : "Room-link"} href="#">{ room.name }</a></li>
+                <li key={ index } onClick={() => this.props.setactiveroom(room)} ><a className={this.isCurrentRoom(room) ? "Room-link-active" : "Room-link"} >{ room.name }</a></li>
               )}
           </ul>
       </div>
